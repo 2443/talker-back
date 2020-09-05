@@ -49,7 +49,7 @@ passportConfig();
 app.use(passport.initialize());
 app.use(passport.session());
 
-if ((process.env.NODE_ENV = 'production')) {
+if (process.env.NODE_ENV === 'production') {
   app.use(morgan('combined'));
   app.use(hpp());
   app.use(helmet());
@@ -96,7 +96,7 @@ app.use(function (req, res, next) {
 
 // error handler
 app.use(function (err, req, res, next) {
-  // set locals, only providing error in development
+  console.error(err);
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
 

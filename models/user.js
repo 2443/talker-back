@@ -6,8 +6,8 @@ module.exports = class User extends Sequelize.Model {
         email: { type: DataTypes.STRING(30), unique: true, allowNull: false },
         nickname: { type: DataTypes.STRING(30), allowNull: false },
         password: { type: DataTypes.STRING(100), allowNull: false },
-        statusMessage: { type: DataTypes.STRING(50), allowNull: false },
-        profileImage: { type: DataTypes.STRING(100), allowNull: false },
+        statusMessage: { type: DataTypes.STRING(50), allowNull: true },
+        profileImage: { type: DataTypes.STRING(100), allowNull: true },
       },
       { sequelize, modelName: 'User', tableName: 'users' }
     );

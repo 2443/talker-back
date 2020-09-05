@@ -1,4 +1,5 @@
 const express = require('express');
+const passport = require('passport');
 const { User } = require('../models');
 const router = express.Router();
 const bcrypt = require('bcrypt');
@@ -26,16 +27,6 @@ router.post('/login', (req, res, next) => {
         attributes: {
           exclude: ['password'],
         },
-        include: [
-          {
-            model: Post,
-          },
-          { model: User, as: 'Followings' },
-          {
-            model: User,
-            as: 'Followers',
-          },
-        ],
       });
 
       return res.status(200).json(fullUserWithoutPassword);
