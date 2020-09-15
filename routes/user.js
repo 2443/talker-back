@@ -3,6 +3,26 @@ const { User, Friend } = require('../models');
 var router = express.Router();
 const bcrypt = require('bcrypt');
 const { Op } = require('sequelize');
+const AWS = require('aws-sdk');
+const multerS3 = require('multer-s3');
+const multer = require('multer');
+const path = require('path');
+
+AWS.config.update({
+  accessKeyId: process.env.S3_ACCESS_KEY_ID,
+  secretAccessKey: process.env.S3_SECRET_ACCESS_KEY,
+  region: 'ap-northeast-2',
+});
+const upload = multer({
+  storage: multerS3({
+    s3: new AWS.S3(),
+    bucket: 'talker',
+    key(req, file, cb) {
+      cb(null, `original/${Date.now()}_${path.basename(file.originalname)}`);
+    },
+  }),
+  limits: { fileSize: 20 * 1024 * 1024 },
+});
 
 router.post('/', async (req, res, next) => {
   try {
@@ -133,6 +153,22 @@ router.patch('/friend/:id', async (req, res, next) => {
     console.error(error);
     next(error);
   }
+});
+
+router.put('/', async (req, res, next) => {
+  try {
+    console.log(req.body);
+    const user = await User.update({ ...req.body }, { where: { id: req.user.id } });
+    console.log(user);
+    return res.status(200).json(req.body);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
+router.post('/image', upload.array('image'), async (req, res, next) => {
+  res.json(req.files.map((v) => v.location.replace(/\/original\//, '/thumb/'))[0]);
 });
 
 module.exports = router;

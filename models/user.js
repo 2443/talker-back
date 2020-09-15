@@ -7,7 +7,7 @@ module.exports = class User extends Sequelize.Model {
         nickname: { type: DataTypes.STRING(30), allowNull: false },
         password: { type: DataTypes.STRING(100), allowNull: false },
         statusMessage: { type: DataTypes.STRING(50), allowNull: true },
-        profileImage: { type: DataTypes.STRING(100), allowNull: true },
+        profileImage: { type: DataTypes.STRING(200), allowNull: true },
       },
       { sequelize, modelName: 'User', tableName: 'users' }
     );
@@ -22,6 +22,11 @@ module.exports = class User extends Sequelize.Model {
       as: 'Users',
       through: 'Friend',
       foreignKey: 'FriendId',
+    });
+    this.belongsToMany(models.Room, {
+      as: 'Rooms',
+      through: 'UsersRooms',
+      foreignKey: 'UserId',
     });
   }
 };
