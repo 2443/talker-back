@@ -1,12 +1,13 @@
 const express = require('express');
 const passport = require('passport');
-const { User } = require('../models');
+const { User, Room } = require('../models');
 const router = express.Router();
 const bcrypt = require('bcrypt');
 const dotenv = require('dotenv');
 const AWS = require('aws-sdk');
 const multerS3 = require('multer-s3');
 const multer = require('multer');
+const path = require('path');
 
 dotenv.config();
 
@@ -51,6 +52,14 @@ router.post('/login', (req, res, next) => {
       return res.status(200).json(fullUserWithoutPassword);
     });
   })(req, res, next);
+});
+
+router.post('/user/image', upload.array('image'), async (req, res, next) => {
+  res.json(req.files.map((v) => v.location.replace(/\/original\//, '/thumb/'))[0]);
+});
+
+router.post('/room/image', upload.array('image'), async (req, res, next) => {
+  res.json(req.files.map((v) => v.location.replace(/\/original\//, '/thumb/'))[0]);
 });
 
 module.exports = router;

@@ -33,4 +33,30 @@ router.get('/:roomId', async (req, res, next) => {
   }
 });
 
+router.put('/:roomId', async (req, res, next) => {
+  try {
+    const { roomId } = req.params;
+    const id = parseInt(roomId, 10);
+    const room = await Room.update(
+      {
+        ...req.body,
+      },
+      {
+        where: {
+          id,
+        },
+      }
+    );
+
+    if (req.body.roomImage) {
+      req.body.roomImage = req.body.roomImage.replace(/\/thumb\//, '/original/');
+    }
+
+    return res.status(200).json(req.body);
+  } catch (error) {
+    console.log(error);
+    return res.status(403).send('error!');
+  }
+});
+
 module.exports = router;

@@ -167,8 +167,4 @@ router.put('/', async (req, res, next) => {
   }
 });
 
-router.post('/image', upload.array('image'), async (req, res, next) => {
-  res.json(req.files.map((v) => v.location.replace(/\/original\//, '/thumb/'))[0]);
-});
-
 module.exports = router;
