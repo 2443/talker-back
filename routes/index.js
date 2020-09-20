@@ -27,6 +27,17 @@ const upload = multer({
   limits: { fileSize: 20 * 1024 * 1024 },
 });
 
+const volatility = multer({
+  storage: multerS3({
+    s3: new AWS.S3(),
+    bucket: 'talker',
+    key(req, file, cb) {
+      cb(null, `volatility/${Date.now()}_${path.basename(file.originalname)}`);
+    },
+  }),
+  limits: { fileSize: 20 * 1024 * 1024 },
+});
+
 router.post('/login', (req, res, next) => {
   passport.authenticate('local', (err, user, info) => {
     if (err) {
@@ -60,6 +71,10 @@ router.post('/user/image', upload.array('image'), async (req, res, next) => {
 
 router.post('/room/image', upload.array('image'), async (req, res, next) => {
   res.json(req.files.map((v) => v.location.replace(/\/original\//, '/thumb/'))[0]);
+});
+
+router.post('/chat/image', volatility.array('image'), async (req, res, next) => {
+  res.json(req.files.map((v) => v.location));
 });
 
 module.exports = router;
