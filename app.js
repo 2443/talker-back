@@ -71,7 +71,7 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 db.sequelize
-  .sync()
+  .sync({ force: false })
   .then(() => {
     console.log('db 연결 성공');
   })

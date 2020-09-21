@@ -4,10 +4,9 @@ var router = express.Router();
 
 router.post('/', async (req, res, next) => {
   try {
-    console.log(req.body);
     const { roomTitle, roomUsers } = req.body;
     roomUsers.push(req.user.id);
-    const room = await Room.create({ name: roomTitle });
+    const room = await Room.create({ name: roomTitle, UserId: req.user.id });
     await room.addUsers(roomUsers);
     return res.status(200).json(room);
   } catch (error) {

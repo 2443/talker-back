@@ -11,10 +11,12 @@ module.exports = class Room extends Sequelize.Model {
     );
   }
   static associate(models) {
+    this.belongsTo(models.User);
     this.belongsToMany(models.User, {
       as: 'Users',
       through: 'UsersRooms',
       foreignKey: 'RoomId',
     });
+    this.hasMany(models.Chat);
   }
 };

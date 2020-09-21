@@ -154,6 +154,28 @@ router.patch('/friend/:id', async (req, res, next) => {
     next(error);
   }
 });
+router.delete('/friend/:id', async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const intId = parseInt(id, 10);
+
+    const where = {
+      [Op.or]: [
+        { UserId: req.user.id, FriendId: intId },
+        { UserId: intId, FriendId: req.user.id },
+      ],
+    };
+
+    await Friend.destroy({ where });
+
+    return res.status(200).json(intId);
+
+    // return res.json(user.toJson());
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
 
 router.put('/', async (req, res, next) => {
   try {

@@ -28,5 +28,7 @@ module.exports = class User extends Sequelize.Model {
       through: 'UsersRooms',
       foreignKey: 'UserId',
     });
+    this.hasMany(models.Room);
+    this.hasMany(models.Chat);
   }
 };

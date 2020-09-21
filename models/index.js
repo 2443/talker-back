@@ -7,11 +7,13 @@ const sequelize = new Sequelize(config.database, config.username, config.passwor
 const RoomModel = require('./room');
 const UserModel = require('./user');
 const FriendModel = require('./friend');
+const ChatModel = require('./chat');
 
 const models = {
   Room: RoomModel.init(sequelize, Sequelize),
   User: UserModel.init(sequelize, Sequelize),
   Friend: FriendModel.init(sequelize, Sequelize),
+  Chat: ChatModel.init(sequelize, Sequelize),
 };
 
 // Run `.associate` if it exists,
