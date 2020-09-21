@@ -77,4 +77,24 @@ router.post('/chat/image', volatility.array('image'), async (req, res, next) => 
   res.json(req.files.map((v) => v.location));
 });
 
+router.get('/chat/user/:id', async (req, res, next) => {
+  try {
+    const id = parseInt(req.params.id, 10);
+
+    const fullUserWithoutPassword = await User.findOne({
+      where: { id },
+      attributes: {
+        exclude: ['password'],
+      },
+    });
+
+    return res.status(200).json(fullUserWithoutPassword);
+
+    // return res.json(user.toJson());
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+});
+
 module.exports = router;
