@@ -1,4 +1,5 @@
 var express = require('express');
+const { Op } = require('sequelize');
 const { User, Room } = require('../models');
 var router = express.Router();
 
@@ -7,9 +8,19 @@ router.get('/', async (req, res, next) => {
     const id = req.user?.id;
     const user = await User.findOne({
       where: { id },
-      include: [{ model: Room, as: 'Rooms' }],
     });
-    return res.status(200).json(user.Rooms);
+    const rooms = await user.getRooms({
+      include: [
+        {
+          model: User,
+          as: 'Users',
+          where: { [Op.not]: { id } },
+          attributes: ['nickname', 'profileImage', 'id'],
+        },
+      ],
+    });
+
+    return res.status(200).json(rooms);
   } catch (error) {
     console.log(error);
     return res.status(403).send('error!');
