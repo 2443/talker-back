@@ -3,8 +3,14 @@ module.exports = class Chat extends Sequelize.Model {
   static init(sequelize, DataTypes) {
     return super.init(
       {
-        content: DataTypes.STRING,
-        type: DataTypes.STRING,
+        content: {
+          allowNull: false,
+          type: DataTypes.STRING,
+        },
+        type: {
+          allowNull: true,
+          type: DataTypes.STRING(10),
+        },
       },
       { sequelize, modelName: 'Chat', tableName: 'chats' }
     );

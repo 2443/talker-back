@@ -1,6 +1,6 @@
 const express = require('express');
 const passport = require('passport');
-const { User, Room } = require('../models');
+const { User, Room, Chat } = require('../models');
 const router = express.Router();
 const bcrypt = require('bcrypt');
 const dotenv = require('dotenv');
@@ -37,6 +37,34 @@ const volatility = multer({
     },
   }),
   limits: { fileSize: 20 * 1024 * 1024 },
+});
+
+router.post('/', async (req, res, next) => {
+  try {
+    console.log(req.body);
+    const roomQuery = { [Op.or]: req.body.roomsData.map(({ RoomId }) => ({ id: RoomId })) };
+
+    const chatQuery = req.body.roomsData.map(({ RoomId, lastChatTime }) => {
+      return {
+        createdAt: { [Op.gt]: lastChatTime ? lastChatTime : new Date('2020-01-01') },
+      };
+    });
+
+    const rooms = await Room.findAll({
+      where: roomQuery,
+      attributes: ['id'],
+      include: {
+        model: Chat,
+        as: 'Chats',
+        where: chatQuery,
+      },
+    });
+
+    return res.status(200).json(rooms);
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
 });
 
 router.post('/login', (req, res, next) => {
@@ -124,17 +152,11 @@ router.get('/chat/user/:id', async (req, res, next) => {
           },
         ],
       });
-      // const room = await Room.findOne({
-      //   where: { oneOnOneTarget },
-      //   include: [{ model: User, as: 'Users', attributes: { exclude: ['password', 'email'] } }],
-      // });
 
       return res.status(200).json(newRoom);
     }
 
     return res.status(200).json(room);
-
-    // return res.json(user.toJson());
   } catch (error) {
     console.error(error);
     next(error);

@@ -24,6 +24,7 @@ dotenv.config();
 const app = express();
 app.io = require('socket.io')();
 const passportConfig = require('./passport');
+const { Chat } = require('./models');
 
 // const sessionStore = new MySQLStore({
 //   host: '127.0.0.1',
@@ -112,9 +113,10 @@ app.io.on('connection', (socket) => {
   socket.on('init', function (data) {
     socket.join(data.id);
     socket.emit('welcome', `hello! ${data.name}`);
-    socket.on('message', (data) => {
+    socket.on('message', async (data) => {
       console.log(data);
       socket.broadcast.to(data.roomId).emit('message', data);
+      await Chat.create(data);
     });
     socket.on('disconnect', function () {
       console.log('user disconnected');
